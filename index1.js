@@ -18,12 +18,34 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// my first API project
+const isNotValid = (date) => date.toUTCString() === "Invalid Date";
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/:date", function (req, res) {
+  let date = new Date(req.params.date)
+
+  if(isNotValid(date)){
+    date = new Date(+req.params.date)
+  } 
+
+  if (isNotValid(date)){
+    res.json({error: "Invalid date"})
+    return;
+  }
+
+  res.json({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
 });
 
+app.get("/api", (req, res) => {
+  res.json({
+    unix: new Date().getTime(),
+    utc: new Date().toUTCString()
+  })
+})
 
 
 // Listen on port set in environment variable or default to 3000
